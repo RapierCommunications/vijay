@@ -1,0 +1,33 @@
+name: Sync Notebooks to Production Workspace
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Set the type of virtual host machine to run the job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Setup python environment
+
+      - name: Install Databricks CLI
+        run: |
+          pip install databricks-cli
+
+      - name: Configure Databricks CLI
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          databricks configure --token
+
+      - name: Sync Notebooks to Production Workspace
+        run: |
+          databricks workspace import_dir $GITHUB_WORKSPACE/notebooks /notebooks --overwrite
