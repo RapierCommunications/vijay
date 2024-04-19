@@ -26,7 +26,7 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          databricks configure --token
+          echo -e "$DATABRICKS_HOST\n$DATABRICKS_TOKEN" | databricks configure --token
 
       - name: Sync Notebooks to Production Workspace
         run: |
